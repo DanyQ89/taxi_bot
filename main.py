@@ -7,7 +7,7 @@ import asyncio
 from routers.init import router
 from data.database import init_models
 from data.stats_class import Stats
-token = '7326331029:AAESSXyZWCYr_nRhEEq_NTRQDImxSvh9CNY'
+token = ''
 
 bot = Bot(token=token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
