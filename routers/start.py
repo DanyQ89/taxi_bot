@@ -19,12 +19,12 @@ async def start_function(message: Message, state: FSMContext):
         user = User(user_id=str(message.from_user.id), username=message.from_user.username)
         sess.add(user)
         await sess.commit()
-        await message.answer('Отправьте свой мобильный номер', reply_markup=contact_kb())
+        await message.answer('📱 Отправьте свой мобильный номер', reply_markup=contact_kb())
         await state.set_state(Form.contact)
     else:
         user.username = message.from_user.username
         await sess.commit()
-        await message.answer('Добро пожаловать в бота!', reply_markup=start_kb())
+        await message.answer('👋 Добро пожаловать в бота!', reply_markup=start_kb())
     await sess.close()
 
 @start_router.message(Form.contact)
@@ -35,11 +35,11 @@ async def contact_car(message: Message, state: FSMContext):
     try:
         user.number = message.contact.phone_number
         await sess.commit()
-        await message.answer('Если вы планируете быть водителем, опишите свою машину\n'
-                             'Вам будет начислено 10000 рублей, они будут сниматься за каждого пассажира в размере 100 рублей/пассажир', reply_markup=describe_car_kb())
+        await message.answer('🚗 Если вы планируете быть водителем, опишите свою машину\n'
+                             '💰 Вам будет начислено 10000 рублей, они будут сниматься за каждого пассажира в размере 100 рублей/пассажир', reply_markup=describe_car_kb())
         await state.set_state(Form.car)
     except Exception as err:
-        await message.answer('Отправьте свой мобильный номер', reply_markup=contact_kb())
+        await message.answer('📱 Отправьте свой мобильный номер', reply_markup=contact_kb())
         await state.set_state(Form.contact)
     finally:
         await sess.close()
@@ -57,10 +57,10 @@ async def car_start(message: Message, state: FSMContext):
             user.driver_balance = 10000
             user.my_car = message.text
         await sess.commit()
-        await message.answer('Добро пожаловать в бота!', reply_markup=start_kb())
+        await message.answer('👋 Добро пожаловать в бота!', reply_markup=start_kb())
         await state.clear()
     except Exception as err:
-        await message.answer('Если вы планируете быть водителем, опишите свою машину', reply_markup=describe_car_kb())
+        await message.answer('🚗 Если вы планируете быть водителем, опишите свою машину', reply_markup=describe_car_kb())
         await state.set_state(Form.car)
     finally:
         await sess.close()

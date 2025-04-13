@@ -23,7 +23,7 @@ passenger_router = Router(name=__name__)
 
 @passenger_router.callback_query(F.data == 'home')
 async def home(query: CallbackQuery, state: FSMContext):
-    await query.message.edit_text(text='Добро пожаловать в бота!', reply_markup=start_kb())
+    await query.message.edit_text(text='👋 Добро пожаловать в бота!', reply_markup=start_kb())
 
 
 @passenger_router.callback_query(F.data == 'passenger')
@@ -34,12 +34,12 @@ async def start_function(query: CallbackQuery, state: FSMContext):
     user.who = 'passenger'
     await session.commit()
     await session.close()
-    await query.message.edit_text('Выберите действие:', reply_markup=passenger_kb())
+    await query.message.edit_text('👨‍💼 Выберите действие:', reply_markup=passenger_kb())
 
 
 @passenger_router.callback_query(F.data == 'support')
 async def start_function(query: CallbackQuery, state: FSMContext):
-    await query.message.edit_text('Поддержка: @kotikotikotikotiki', reply_markup=go_home_passenger())
+    await query.message.edit_text('💬 Поддержка: @kotikotikotikotiki', reply_markup=go_home_passenger())
 
 
 @passenger_router.callback_query(F.data == 'end_trip')
@@ -63,11 +63,11 @@ async def end_trip(query: CallbackQuery, state: FSMContext):
         Stats.day += 1
         Stats.month += 1
         Stats.all += 1
-        await query.message.edit_text('Выберите действие:', reply_markup=passenger_kb())
+        await query.message.edit_text('👨‍💼 Выберите действие:', reply_markup=passenger_kb())
     else:
-        await query.message.bot.send_message(chat_id=driver.user_id, text='Ваш заказ отменен')
+        await query.message.bot.send_message(chat_id=driver.user_id, text='❌ Ваш заказ отменен')
         driver.driver_balance += price_func * passengers_func
-        await query.message.edit_text('Выберите действие:', reply_markup=passenger_kb())
+        await query.message.edit_text('👨‍💼 Выберите действие:', reply_markup=passenger_kb())
 
     await sess.commit()
     await sess.close()
@@ -76,7 +76,7 @@ async def end_trip(query: CallbackQuery, state: FSMContext):
 
 @passenger_router.callback_query(F.data == 'order')
 async def order(query: CallbackQuery, state: FSMContext):
-    await query.message.answer(text='Выберите населенный пункт',
+    await query.message.answer(text='📍 Выберите населенный пункт',
                                reply_markup=choose_point_kb())
     await state.set_state(Form.point)
 
@@ -90,20 +90,20 @@ async def point(msg: Message, state: FSMContext):
     try:
         text = msg.text
         if text not in points:
-            await msg.answer('Некорректный пункт')
+            await msg.answer('❌ Некорректный пункт')
             await state.set_state(Form.point)
         else:
             user.point = text
-            await msg.answer('Введите адрес прибытия или выберите из недавних:\n'
-                             f'1 - {user.last_1_address_to if user.last_1_address_to else "Недоступно"}\n'
-                             f'2 - {user.last_2_address_to if user.last_2_address_to else "Недоступно"}\n'
-                             f'3 - {user.last_3_address_to if user.last_3_address_to else "Недоступно"}'
+            await msg.answer('🏢 Введите адрес прибытия или выберите из недавних:\n'
+                             f'1️⃣ - {user.last_1_address_to if user.last_1_address_to else "❌ Недоступно"}\n'
+                             f'2️⃣ - {user.last_2_address_to if user.last_2_address_to else "❌ Недоступно"}\n'
+                             f'3️⃣ - {user.last_3_address_to if user.last_3_address_to else "❌ Недоступно"}'
                              , reply_markup=choose_address_kb())
             await session.commit()
             await state.set_state(Form.address_to)
 
     except Exception as err:
-        await msg.answer('Выберите населенный пункт из списка',
+        await msg.answer('📍 Выберите населенный пункт из списка',
                          reply_markup=choose_point_kb())
         await state.set_state(Form.point)
     await session.close()
@@ -143,19 +143,19 @@ async def address_to(msg: Message, state: FSMContext):
         user.last_2_address_to = user.last_1_address_to
         user.last_1_address_to = user.address_to
 
-        await msg.answer('Введите адрес оправления или выберите из недавних:\n'
-                         f'1 - {user.last_1_address_from if user.last_1_address_from else "Недоступно"}\n'
-                         f'2 - {user.last_2_address_from if user.last_2_address_from else "Недоступно"}\n'
-                         f'3 - {user.last_3_address_from if user.last_3_address_from else "Недоступно"}\n'
+        await msg.answer('🏠 Введите адрес оправления или выберите из недавних:\n'
+                         f'1️⃣ - {user.last_1_address_from if user.last_1_address_from else "❌ Недоступно"}\n'
+                         f'2️⃣ - {user.last_2_address_from if user.last_2_address_from else "❌ Недоступно"}\n'
+                         f'3️⃣ - {user.last_3_address_from if user.last_3_address_from else "❌ Недоступно"}\n'
                          , reply_markup=choose_address_kb())
         await session.commit()
         await state.set_state(Form.address_from)
     except Exception as err:
         print(err)
-        await msg.answer('Введите адрес прибытия или выберите из недавних:\n'
-                         f'1 - {user.last_1_address_to if user.last_1_address_to else "Недоступно"}\n'
-                         f'2 - {user.last_2_address_to if user.last_2_address_to else "Недоступно"}\n'
-                         f'3 - {user.last_3_address_to if user.last_3_address_to else "Недоступно"}'
+        await msg.answer('🏢 Введите адрес прибытия или выберите из недавних:\n'
+                         f'1️⃣ - {user.last_1_address_to if user.last_1_address_to else "❌ Недоступно"}\n'
+                         f'2️⃣ - {user.last_2_address_to if user.last_2_address_to else "❌ Недоступно"}\n'
+                         f'3️⃣ - {user.last_3_address_to if user.last_3_address_to else "❌ Недоступно"}'
                          , reply_markup=choose_address_kb())
         await state.set_state(Form.address_to)
 
@@ -193,16 +193,16 @@ async def address_from(msg: Message, state: FSMContext):
         user.last_3_address_from = user.last_2_address_from
         user.last_2_address_from = user.last_1_address_from
         user.last_1_address_from = user.address_from
-        await msg.answer('Введите количество пассажиров(максимум 4)'
+        await msg.answer('👥 Введите количество пассажиров(максимум 4)'
                          , reply_markup=choose_passengers())
         await session.commit()
         await state.set_state(Form.passengers)
     except Exception as err:
         print(err)
-        await msg.answer('Введите адрес оправления или выберите из недавних:\n'
-                         f'1 - {user.last_1_address_from if user.last_1_address_from else "Недоступно"}\n'
-                         f'2 - {user.last_2_address_from if user.last_2_address_from else "Недоступно"}\n'
-                         f'3 - {user.last_3_address_from if user.last_3_address_from else "Недоступно"}\n'
+        await msg.answer('🏠 Введите адрес оправления или выберите из недавних:\n'
+                         f'1️⃣ - {user.last_1_address_from if user.last_1_address_from else "❌ Недоступно"}\n'
+                         f'2️⃣ - {user.last_2_address_from if user.last_2_address_from else "❌ Недоступно"}\n'
+                         f'3️⃣ - {user.last_3_address_from if user.last_3_address_from else "❌ Недоступно"}\n'
                          , reply_markup=choose_address_kb())
         await state.set_state(Form.address_from)
 
@@ -221,11 +221,11 @@ async def passengers(msg: Message, state: FSMContext):
         if not 0 < text < 5:
             raise Exception
         user.passengers = text
-        await msg.answer('Введите стоимость поездки:', reply_markup=choose_price())
+        await msg.answer('💰 Введите стоимость поездки:', reply_markup=choose_price())
         await session.commit()
         await state.set_state(Form.price)
     except Exception as err:
-        await msg.answer('Введите количество пассажиров(максимум 4)',
+        await msg.answer('👥 Введите количество пассажиров(максимум 4)',
                          reply_markup=choose_passengers())
         await state.set_state(Form.passengers)
 
@@ -247,7 +247,7 @@ async def price(msg: Message, state: FSMContext):
             raise Exception
         user.price = text
         user.active = True
-        await msg.answer('Ваш заказ создан!\n'
+        await msg.answer('✅ Ваш заказ создан!\n'
                          'Когда водитель примет ваш заказ, вам придет уведомление')
 
         message_to_group = await msg.bot.send_message(chat_id=-1002249861834, text=f'Новый заказ!\n'
@@ -267,7 +267,7 @@ async def price(msg: Message, state: FSMContext):
 
 
     except Exception as err:
-        await msg.answer('Введите стоимость поездки:',
+        await msg.answer('💰 Введите стоимость поездки:',
                          reply_markup=choose_price())
         await state.set_state(Form.price)
     finally:
